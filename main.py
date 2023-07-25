@@ -62,5 +62,3 @@ def gvisionAPIProcess(string64file: str):
                 "cantidadRostros": 0
             }
             return info
-        
-            
