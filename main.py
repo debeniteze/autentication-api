@@ -1,5 +1,7 @@
 import os
 import upload_file_storage
+import send_message
+from datetime import datetime
 from google.cloud import vision
 from base_vision import VisionAI
 from fastapi import FastAPI
@@ -33,17 +35,32 @@ def gvisionAPIProcess(string64file: str):
 
     
     image = prepare_image_local(base64_image)     
-    print(image)  
     client = vision.ImageAnnotatorClient()
     va = VisionAI(client, image)
     faces = va.face_detection()
-  
-    for face in faces:
-        info = {
-            "confianza": face.detection_confidence,
-            "sonrisa": face.joy_likelihood,
-            "cantidadRostros": len(faces)
-        }
-        print(info)
-        break
-    return info
+
+    fecha_hora_actual = datetime.now()
+    fecha_hora_formateada = fecha_hora_actual.strftime("%d/%m/%Y %H:%M:%S")
+
+    if faces is not None:
+        message = f"Se ha registrado un ingreso exitoso, el dia: {fecha_hora_formateada}"
+        send_message.send_message(message)
+        
+        for face in faces:
+            info = {
+                "confianza": face.detection_confidence,
+                "sonrisa": face.joy_likelihood,
+                "cantidadRostros": len(faces)
+            }
+            break
+        return info
+    else:
+            message = f"Se ha registrado un ingreso no exitoso, el dia: {fecha_hora_formateada}"
+            send_message.send_message(message)
+            info = {
+                "error": "No se encontro un rostro en la imagen",
+                "cantidadRostros": 0
+            }
+            return info
+        
+            
