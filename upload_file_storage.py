@@ -35,18 +35,3 @@ def get_image_base64_from_firebase(image_path):
         image_bytes = blob.download_as_bytes()
         print('Termino')
         return image_bytes
-
-
-def enviar_notificacion(token, titulo, cuerpo):
-    # Crear un mensaje
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title=titulo,
-            body=cuerpo,
-        ),
-        token=token,
-    )
-
-    # Enviar el mensaje
-    response = messaging.send(message)
-    print("Notificación enviada:", response)
